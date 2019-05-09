@@ -5,9 +5,9 @@
 
 namespace locjson {
 
-	typedef const rapidjson::Value& JSONValue;
-	typedef       rapidjson::Value  JSONArray;
-	typedef     rapidjson::Document JSONDocument;
+	typedef const rapidjson::Value&   JSONValue;
+	typedef const rapidjson::Value&   JSONArray;
+	typedef       rapidjson::Document JSONDocument;
 	struct JSONBuilder 
 	{
 		rapidjson::StringBuffer buf;
@@ -18,14 +18,14 @@ namespace locjson {
 	inline const rapidjson::Value& Parse(const rapidjson::Document& d) { return d; }
 	inline int32_t                 LookupInt32(  const rapidjson::Value& v, const char* field, bool& out_error) { return v[field].GetInt(); }
 	inline uint32_t                LookupUInt32( const rapidjson::Value& v, const char* field, bool& out_error) { return (uint32_t)v[field].GetInt(); }
-	inline PHANTASMA_STRING        LookupString( const rapidjson::Value& v, const char* field, bool& out_error) { return (PHANTASMA_STRING)(v[field].GetString()); }
+	inline const char*             LookupString( const rapidjson::Value& v, const char* field, bool& out_error) { return v[field].GetString(); }
 	inline const rapidjson::Value& LookupValue(  const rapidjson::Value& v, const char* field, bool& out_error) { return v[field]; }
 	inline const rapidjson::Value& LookupArray(  const rapidjson::Value& v, const char* field, bool& out_error) { return v[field]; }
 	inline bool                    HasField(     const rapidjson::Value& v, const char* field, bool& out_error) { return v.HasMember(field); }
 	inline bool                    HasArrayField(const rapidjson::Value& v, const char* field, bool& out_error) { return v[field].IsArray(); }
 	inline int32_t                 AsInt32(      const rapidjson::Value& v,                    bool& out_error) { return v.GetInt(); }
 	inline uint32_t                AsUInt32(     const rapidjson::Value& v,                    bool& out_error) { return (uint32_t)v.GetInt(); }
-	inline PHANTASMA_STRING        AsString(     const rapidjson::Value& v,                    bool& out_error) { return (PHANTASMA_STRING)(v.GetString()); }
+	inline const char*             AsString(     const rapidjson::Value& v,                    bool& out_error) { return v.GetString(); }
 	inline const rapidjson::Value& AsArray(      const rapidjson::Value& v,                    bool& out_error) { return v; }
 	inline bool                    IsArray(      const rapidjson::Value& v,                    bool& out_error) { return v.IsArray(); }
 	inline bool                    IsObject(     const rapidjson::Value& v,                    bool& out_error) { return v.IsObject(); }
