@@ -51,18 +51,25 @@
 // If you write code that uses this locjson, you can easily swap this file out
 // for one of the above files later to switch to a better JSON parser.
 //
+// Why another no-dependencies single-file C++ JSON parser?
+// I looked at some others and they were up to 20k LOC... This file is:
+// ~140 lines of this comment block
+// ~130 lines of API declaration + config block
+// ~200 lines of implementation
+//
 //------------------------------------------------------------------------------
 // Limitations
 //------------------------------------------------------------------------------
-// The parser should handle any valid JSON document. However, there is no API to
-// *retrieve* fractional/floating point numbers, booleans, or null.
+// The parser should handle any valid JSON document. However, there is currently
+// no API to *retrieve* fractional/floating point numbers, booleans, or null.
 //
 // Error reporting will return a flag (or throw an exception if you opt-in) when
 // invalid JSON is detected, but there's no line number reporting or anything 
 // helpful like that.
 //
-// The JSON builder supports a single, non-nested object containing string keys,
-// string values, or array values containing strings or numbers.
+// The JSON builder is VERY simple. It only supports a single, non-nested object
+// containing string keys, string values, or array values containing strings or 
+// numbers.
 //
 //------------------------------------------------------------------------------
 // API configuration
@@ -106,7 +113,7 @@
 //
 // Aside from LOCJSON_IMPLEMENTATION / LOCJSON_FUNCTION, you should take care
 //  to ensure that every other LOCJSON_* macro is defined to the same value in
-//  all of yoru CPP files that use the locjson API.
+//  all of your CPP files that use the locjson API.
 //
 //------------------------------------------------------------------------------
 // Exceptions
