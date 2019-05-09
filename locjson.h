@@ -1,11 +1,13 @@
 #pragma once
 // This software is licensed under either the terms of the MIT license
 //  or the DWTFYWPL, reproduced below.
+//
 //------------------------------------------------------------------------------
 //MIT License
 //------------------------------------------------------------------------------
 //
 //Copyright (c) 2019 Brooke Hodgman
+//
 //Permission is hereby granted, free of charge, to any person
 //obtaining a copy of this software and associated documentation
 //files (the "Software"), to deal in the Software without
@@ -42,20 +44,26 @@
 // This parser is written to be small and simple (LOC-JSON stands for lines of 
 // code), so it's likely slower than other parsers and has a coarser API.
 // 
+// If your project needs JSON parsing abilities, but you don't want to tie your
+// users to any particular JSON-parser dependency, then this file is designed
+// to act as a decent default.
+// 
 // This library is also designed to be replacable. The `migration` directory
 // contains:
-//   locjson_to_cpprest.h
-//   locjson_to_rapidjson.h
+//   `locjson_to_cpprest.h`
+//   `locjson_to_rapidjson.h`
 // Which implement the same API as this file, but simply convert your calls to
 // the cpprest or japidjson libraries.
+//
 // If you write code that uses this locjson, you can easily swap this file out
 // for one of the above files later to switch to a better JSON parser.
 //
 // Why another no-dependencies single-file C++ JSON parser?
 // I looked at some others and they were up to 20k LOC... This file is:
-// ~140 lines of this comment block
-// ~130 lines of API declaration + config block
-// ~200 lines of implementation
+//
+//-   ~155 lines of this comment block
+//-   ~130 lines of API declaration + config block
+//-   ~200 lines of implementation
 //
 //------------------------------------------------------------------------------
 // Limitations
@@ -77,6 +85,7 @@
 // As different C++ projects may use different primitive types, you can use the 
 //  following #defines (BEFORE including locjson.h) to override the default types.
 //
+//```
 // #define               | typedef               | Default           | Notes
 // LOCJSON_INT32         | locjson::Int32        | int32_t           |
 // LOCJSON_UINT32        | locjson::UInt32       | uint32_t          |
@@ -84,35 +93,36 @@
 // LOCJSON_STRING        | locjson::String       | std::string       | Must support construction from `const LOCJSON_CHAR*`
 // LOCJSON_STRING_VIEW   | locjson::StringView   | std::string_view* | *If C++17 is available, else std::string
 // LOCJSON_STRING_STREAM | locjson::StringStream | std::stringstream | 
+//```
 //
 // The behavior of this header can further be modified by using the following 
 //  #defines (BEFORE including locjson.h)
-// 
+//```
 // #define                    | Notes                   
 // LOCJSON_EXCEPTION(message) | See Exceptions section
 // LOCJSON_LITERAL(x)         | See Unicode section
 // LOCJSON_FUNCTION           | See Integration section         
 // LOCJSON_IMPLEMENTATION     | See Integration section
-//
+//```
 //------------------------------------------------------------------------------
 // Integration
 //------------------------------------------------------------------------------
 // This API is provided in the "single header" style to support simple and flexible
 //  integration into your project (see https://github.com/nothings/single_file_libs).
 //  The implementation of function bodies will be excluded unless you define
-//  LOCJSON_IMPLEMENTATION before including locjson.h.
+//  `LOCJSON_IMPLEMENTATION` before including locjson.h.
 //
 // Typical linking:
 //  In one CPP file, before including locjson.h:
-//   #define LOCJSON_IMPLEMENTATION
-// 
+//   `#define LOCJSON_IMPLEMENTATION`
+//
 // Inline linking:
 //  In every CPP file that uses the API, before including locjson.h:
-//   #define LOCJSON_IMPLEMENTATION
-//   #define LOCJSON_FUNCTION inline
+//   `#define LOCJSON_IMPLEMENTATION`
+//   `#define LOCJSON_FUNCTION inline`
 //
-// Aside from LOCJSON_IMPLEMENTATION / LOCJSON_FUNCTION, you should take care
-//  to ensure that every other LOCJSON_* macro is defined to the same value in
+// Aside from `LOCJSON_IMPLEMENTATION` / `LOCJSON_FUNCTION`, you should take care
+//  to ensure that every other `LOCJSON_*` macro is defined to the same value in
 //  all of your CPP files that use the locjson API.
 //
 //------------------------------------------------------------------------------
@@ -120,15 +130,19 @@
 //------------------------------------------------------------------------------
 // Support for C++ exceptions is opt-in. Define the following (or an alternative
 //  based on your own exception classes) before including locjson.h:
+//```
 // #define LOCJSON_EXCEPTION(message) throw std::runtime_error(message)
-//
+//```
 //------------------------------------------------------------------------------
 // Unicode
 //------------------------------------------------------------------------------
+// The library has only been tested on ASCII documents. UTF-8 may or may not work...
+//
 // To build a wide-character version of the API, define the following before
 //  including locjson.h:
+//```
 // #defien LOCJSON_WIDE
-//
+//```
 //------------------------------------------------------------------------------
 // C++17
 //------------------------------------------------------------------------------
@@ -139,9 +153,10 @@
 // Microsoft Visual Studio reports the wrong value for __cplusplus by default
 // for reasons. To enable C++17 suppport in MSVC, you need to add these compiler
 // switches:
-//  /Zc:__cplusplus /std:c++17
+//  `/Zc:__cplusplus /std:c++17`
 // OR:
-//  /Zc:__cplusplus /std:c++latest
+//  `/Zc:__cplusplus /std:c++latest`
+//
 //------------------------------------------------------------------------------
 
 #if !defined(LOCJSON_STRING)
@@ -276,9 +291,9 @@ namespace locjson
 	void EndObject(JSONBuilder&);
 }
 
-#if defined(LOCJSON_IMPLEMENTATION)
 namespace locjson
 {
+#if defined(LOCJSON_IMPLEMENTATION)
     JSONValue Parse(const JSONDocument& doc) { return doc; }
 
 	inline size_t SkipNumber(const JSONValue& v, size_t i, bool& out_error)
@@ -475,14 +490,18 @@ namespace locjson
 		return LOCJSON_LITERAL("");
 	}
 
-	LOCJSON_FUNCTION                 void AddKey(JSONBuilder& b, const Char* key)                       { if(!b.empty) { b.s << LOCJSON_LITERAL(", "); } b.empty = false; b.s << '"' << key << LOCJSON_LITERAL("\": "); }
+	LOCJSON_FUNCTION                 void _AddKey(JSONBuilder& b, const Char* key)                      { if(!b.empty) { b.s << LOCJSON_LITERAL(", "); } b.empty = false; b.s << '"' << key << LOCJSON_LITERAL("\": "); }
 	LOCJSON_FUNCTION                 void BeginObject(JSONBuilder& b)                                   { b.s << '{'; }
 	LOCJSON_FUNCTION                 void EndObject(JSONBuilder& b)                                     { b.s << '}'; }
-	LOCJSON_FUNCTION                 void AddValues(JSONBuilder& b)                                     {}
-	LOCJSON_FUNCTION                 void AddValues(JSONBuilder& b, const char* arg)                    { b.s << '"' << arg << '"'; }
-	template<class T>                void AddValues(JSONBuilder& b, T arg)                              { b.s << arg; }
-	template<class T, class... Args> void AddValues(JSONBuilder& b, T arg0, Args... args)               { AddValues(b, arg0); b.s << LOCJSON_LITERAL(", "); AddValues(b.args...); }
-	LOCJSON_FUNCTION                 void AddString(JSONBuilder& b, const Char* key, const Char* value) { AddKey(b, key); b.s << '"' << value << '"'; }
-	template<class... Args>          void AddArray(JSONBuilder& b, const Char* key, Args... args)       { AddKey(b, key); b.s << '['; AddValues(b, args...); b.s << ']'; }
-}
+	LOCJSON_FUNCTION                 void _AddValues(JSONBuilder& b)                                    {}
+	LOCJSON_FUNCTION                 void _AddValues(JSONBuilder& b, const char* arg)                   { b.s << '"' << arg << '"'; }
+	LOCJSON_FUNCTION                 void AddString(JSONBuilder& b, const Char* key, const Char* value) { _AddKey(b, key); b.s << '"' << value << '"'; }
+#else
+	LOCJSON_FUNCTION                 void _AddKey(JSONBuilder& b, const Char* key);
+	LOCJSON_FUNCTION                 void _AddValues(JSONBuilder& b);
+	LOCJSON_FUNCTION                 void _AddValues(JSONBuilder& b, const char* arg;
 #endif
+	template<class T>                void _AddValues(JSONBuilder& b, T arg)                              { b.s << arg; }
+	template<class T, class... Args> void _AddValues(JSONBuilder& b, T arg0, Args... args)               { _AddValues(b, arg0); b.s << LOCJSON_LITERAL(", "); _AddValues(b.args...); }
+	template<class... Args>          void AddArray(JSONBuilder& b, const Char* key, Args... args)       { _AddKey(b, key); b.s << '['; _AddValues(b, args...); b.s << ']'; }
+}

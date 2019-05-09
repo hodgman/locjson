@@ -6,6 +6,7 @@ MIT License
 ------------------------------------------------------------------------------
 
 Copyright (c) 2019 Brooke Hodgman
+
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
 files (the "Software"), to deal in the Software without
@@ -41,6 +42,10 @@ OTHER DEALINGS IN THE SOFTWARE.
  I needed a simple, bare-bones, C++ JSON parser with no dependencies.
  This parser is written to be small and simple (LOC-JSON stands for lines of 
  code), so it's likely slower than other parsers and has a coarser API.
+ 
+ If your project needs JSON parsing abilities, but you don't want to tie your
+ users to any particular JSON-parser dependency, then this file is designed
+ to act as a decent default.
 
  This library is also designed to be replacable. The `migration` directory
  contains:
@@ -48,14 +53,16 @@ OTHER DEALINGS IN THE SOFTWARE.
    `locjson_to_rapidjson.h`
  Which implement the same API as this file, but simply convert your calls to
  the cpprest or japidjson libraries.
+ 
  If you write code that uses this locjson, you can easily swap this file out
  for one of the above files later to switch to a better JSON parser.
 
  Why another no-dependencies single-file C++ JSON parser?
  I looked at some others and they were up to 20k LOC... This file is:
- ~140 lines of this comment block
- ~130 lines of API declaration + config block
- ~200 lines of implementation
+
+-  ~155 lines of this comment block
+-  ~130 lines of API declaration + config block
+-  ~200 lines of implementation
 
 ------------------------------------------------------------------------------
  Limitations
@@ -128,6 +135,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 ------------------------------------------------------------------------------
  Unicode
 ------------------------------------------------------------------------------
+ The library has only been tested on ASCII documents. UTF-8 may or may not work...
+
  To build a wide-character version of the API, define the following before
   including locjson.h:
 ```
