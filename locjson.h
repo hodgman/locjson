@@ -36,6 +36,35 @@
 // 0. You just DO WHAT THE FUCK YOU WANT TO.
 //
 //------------------------------------------------------------------------------
+// Purpose
+//------------------------------------------------------------------------------
+// I needed a simple, bare-bones, C++ JSON parser with no dependencies.
+// This parser is written to be small and simple (LOC-JSON stands for lines of 
+// code), so it's likely slower than other parsers and has a coarser API.
+// 
+// This library is also designed to be replacable. The `migration` directory
+// contains:
+//   locjson_to_cpprest.h
+//   locjson_to_rapidjson.h
+// Which implement the same API as this file, but simply convert your calls to
+// the cpprest or japidjson libraries.
+// If you write code that uses this locjson, you can easily swap this file out
+// for one of the above files later to switch to a better JSON parser.
+//
+//------------------------------------------------------------------------------
+// Limitations
+//------------------------------------------------------------------------------
+// The parser should handle any valid JSON document. However, there is no API to
+// *retrieve* fractional/floating point numbers, booleans, or null.
+//
+// Error reporting will return a flag (or throw an exception if you opt-in) when
+// invalid JSON is detected, but there's no line number reporting or anything 
+// helpful like that.
+//
+// The JSON builder supports a single, non-nested object containing string keys,
+// string values, or array values containing strings or numbers.
+//
+//------------------------------------------------------------------------------
 // API configuration
 //------------------------------------------------------------------------------
 // As different C++ projects may use different primitive types, you can use the 
@@ -93,6 +122,19 @@
 //  including locjson.h:
 // #defien LOCJSON_WIDE
 //
+//------------------------------------------------------------------------------
+// C++17
+//------------------------------------------------------------------------------
+// When built on a C++17 compiler, the parser will not perform any memory 
+// allocations. On earlier compilers, the parser will perform a lot of temporary
+// memory allocations...
+//
+// Microsoft Visual Studio reports the wrong value for __cplusplus by default
+// for reasons. To enable C++17 suppport in MSVC, you need to add these compiler
+// switches:
+//  /Zc:__cplusplus /std:c++17
+// OR:
+//  /Zc:__cplusplus /std:c++latest
 //------------------------------------------------------------------------------
 
 #if !defined(LOCJSON_STRING)
